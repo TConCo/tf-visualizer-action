@@ -1,6 +1,6 @@
-# action.yml
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'TF Visualizer Action'
+description: 'See changes for Terraform in pull requests'
+author: 'Fatih Tokus'
 inputs:
   who-to-greet:  # id of input
     description: 'Who to greet'
@@ -14,3 +14,6 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.who-to-greet }}
+branding:
+  icon: "git-pull-request"
+  color: "purple"
