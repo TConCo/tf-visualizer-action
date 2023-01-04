@@ -20,7 +20,7 @@ public class Application {
 	public static String TOKEN;
 
 	public static void main(String[] args) throws Exception{
-		logger.info("Test runner process started at: {}", Instant.now());
+		logger.error("Test runner process started at: {}", Instant.now());
 
 		if(args.length != 2) {
 			throw new RuntimeException("Expected argument number is 2 but " + args.length + " supplied");
@@ -28,7 +28,7 @@ public class Application {
 
 		PULLREQUEST = args[0];
 		TOKEN = args[1];
-		logger.info("Test runner process started with: PULLREQUEST: {}, TOKEN: {}", PULLREQUEST, TOKEN);
+		logger.error("Test runner process started with: PULLREQUEST: {}, TOKEN: {}", PULLREQUEST, TOKEN);
 		Application bootApplication = new Application();
 		Process process = bootApplication.runTestInAProcess();
 	}
@@ -44,12 +44,12 @@ public class Application {
 		String curlCommand = String.format("curl %s %s %s", url, credentials, payload);
 		boolean isWindows = true;
 		List<String> shellCommand = isWindows ? asList("cmd", "/C", curlCommand) : asList("bash", "-c", curlCommand);
-		logger.info("Adding comment '{}' to PR '{}'", payload, url);
+		logger.error("Adding comment '{}' to PR '{}'", payload, url);
 		ProcessBuilder builder = new ProcessBuilder(shellCommand);
 
 		Process process = builder.start();
 		String output = new BufferedReader(new InputStreamReader(process.getInputStream())).lines().collect(joining("\n"));
-		logger.info(output);
+		logger.error(output);
 		return process;
 	}
 }
