@@ -7,4 +7,4 @@ COPY ./src ./src
 RUN ["chmod", "+x", "mvnw"]
 RUN ./mvnw dependency:go-offline -B
 RUN ./mvnw clean package -q && cp target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
