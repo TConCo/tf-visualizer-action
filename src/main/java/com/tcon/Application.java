@@ -50,6 +50,7 @@ public class Application {
 		Process process = builder.start();
 		String output = new BufferedReader(new InputStreamReader(process.getInputStream())).lines().collect(joining("\n"));
 		logger.error(output);
+
 		return process;
 	}
 }
