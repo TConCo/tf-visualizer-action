@@ -2,7 +2,11 @@ name: 'TF Visualizer Action'
 description: 'See changes for Terraform in pull requests'
 author: 'Fatih Tokus'
 inputs:
-  who-to-greet:  # id of input
+  pull-request:  # id of input
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+  github-token: # id of input
     description: 'Who to greet'
     required: true
     default: 'World'
@@ -13,7 +17,8 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.who-to-greet }}
+    - ${{ inputs.pull-request }}
+    - ${{ inputs.github-token }}
 branding:
   icon: "git-pull-request"
   color: "purple"

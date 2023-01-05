@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -20,7 +21,7 @@ public class Application {
 	public static String TOKEN;
 
 	public static void main(String[] args) throws Exception{
-		logger.error("Test runner process started at: {}", Instant.now());
+		logger.error("Plugin started with {} at: {}", Arrays.toString(args), Instant.now());
 
 		if(args.length != 2) {
 			throw new RuntimeException("Expected argument number is 2 but " + args.length + " supplied");
