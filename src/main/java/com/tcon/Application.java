@@ -15,13 +15,10 @@ import static java.util.stream.Collectors.joining;
 
 public class Application {
 	private static final Logger logger = LogManager.getLogger(Application.class);
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-
 	public static String PULLREQUEST;
 	public static String TOKEN;
-
 	public static void main(String[] args) throws Exception{
-		logger.error("Plugin started with {} at: {}", Arrays.toString(args), Instant.now());
+		logger.error("Plugin started with {} on {} at: {}", Arrays.toString(args), operatingSystem(), Instant.now());
 
 		if(args.length != 2) {
 			throw new RuntimeException("Expected argument number is 2 but " + args.length + " supplied!");
@@ -43,8 +40,7 @@ public class Application {
 		String credentials = "-u " + TOKEN;
 		payload = payload.isEmpty() ? "" : "-d " + payload;
 		String curlCommand = String.format("curl %s %s %s", url, credentials, payload);
-		boolean isWindows = true;
-		List<String> shellCommand = isWindows ? asList("cmd", "/C", curlCommand) : asList("bash", "-c", curlCommand);
+		List<String> shellCommand = isRunningOnWindows() ? asList("cmd", "/C", curlCommand) : asList("bash", "-c", curlCommand);
 		logger.error("Adding comment '{}' to PR '{}'", payload, url);
 		ProcessBuilder builder = new ProcessBuilder(shellCommand);
 
@@ -53,5 +49,13 @@ public class Application {
 		logger.error(output);
 
 		return process;
+	}
+
+	private static String operatingSystem() {
+		return System.getProperty("os.name");
+	}
+
+	private boolean isRunningOnWindows() {
+		return operatingSystem().toLowerCase().contains("windows");
 	}
 }
