@@ -24,7 +24,7 @@ public class Application {
 		logger.error("Plugin started with {} at: {}", Arrays.toString(args), Instant.now());
 
 		if(args.length != 2) {
-			throw new RuntimeException("Expected argument number is 2 but " + args.length + " supplied");
+			throw new RuntimeException("Expected argument number is 2 but " + args.length + " supplied!");
 		}
 
 		PULLREQUEST = args[0];
