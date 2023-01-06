@@ -26,7 +26,6 @@ public class Application {
 
 		PULLREQUEST = args[0];
 		TOKEN = args[1];
-		logger.error("Test runner process started with: PULLREQUEST: {}, TOKEN: {}", PULLREQUEST, TOKEN);
 		Application bootApplication = new Application();
 		Process process = bootApplication.runTestInAProcess();
 	}
@@ -37,19 +36,20 @@ public class Application {
 		String url = PULLREQUEST.replace("/pulls/", "/issues/") + "/comments";
 		String body = "test";
 		String payload = String.format(" \" { \\\"body\\\" : \\\" %s \\\" } \" ", body);
-		String credentials = "-u " + TOKEN;
+		//String credentials = "-u " + TOKEN;
+		String credentials = String.format("--header \"authorization: Bearer %s\"", TOKEN);
 		payload = payload.isEmpty() ? "" : "-d " + payload;
 		String curlCommand = String.format("curl %s %s %s", url, credentials, payload);
 		List<String> shellCommand = isRunningOnWindows() ? asList("cmd", "/C", curlCommand) : asList("bash", "-c", curlCommand);
-		logger.error("Adding comment '{}' to PR '{}'", payload, url);
+		logger.error("Requesting '{}'", shellCommand);
 		ProcessBuilder builder = new ProcessBuilder(shellCommand);
-
 		Process process = builder.start();
-		String output = new BufferedReader(new InputStreamReader(process.getInputStream())).lines().collect(joining("\n"));
-		logger.error(output);
+		String response = new BufferedReader(new InputStreamReader(process.getInputStream())).lines().collect(joining("\n"));
+		logger.error("Requested '{}'", shellCommand);
+		logger.error("Response '{}'", response);
+
 		return process;
 	}
-
 	private static String operatingSystem() {
 		return System.getProperty("os.name");
 	}
