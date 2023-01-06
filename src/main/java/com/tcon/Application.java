@@ -47,7 +47,6 @@ public class Application {
 		String response = new BufferedReader(new InputStreamReader(process.getInputStream())).lines().collect(joining("\n"));
 		logger.error("Requested '{}'", shellCommand);
 		logger.error("Response '{}'", response);
-
 		return process;
 	}
 	private static String operatingSystem() {
