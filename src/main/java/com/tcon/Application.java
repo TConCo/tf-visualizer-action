@@ -28,6 +28,8 @@ public class Application {
 			throw new RuntimeException("Expected argument number is 2 but " + args.length + " supplied!");
 		}
 
+		extracted("/");
+		extracted("");
 		extracted("/home/runner/work/tf-visualizer-action-test/tf-visualizer-action-test");
 		extracted("home/runner/work/tf-visualizer-action-test/tf-visualizer-action-test");
 		extracted("/github/workspace");
