@@ -5,10 +5,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
@@ -24,10 +27,32 @@ public class Application {
 			throw new RuntimeException("Expected argument number is 2 but " + args.length + " supplied!");
 		}
 
+		extracted("/home/runner/work/tf-visualizer-action-test/tf-visualizer-action-test");
+		extracted("home/runner/work/tf-visualizer-action-test/tf-visualizer-action-test");
+		extracted("/github/workspace");
+		extracted("github/workspace");
+		///home/runner/work/tf-visualizer-action-test/tf-visualizer-action-test
+
 		PULLREQUEST = args[0];
 		TOKEN = args[1];
 		Application bootApplication = new Application();
 		Process process = bootApplication.runTestInAProcess();
+	}
+
+	private static void extracted(String path) {
+		Path directory = Paths.get(path);
+
+		try {
+			String all =
+					Files.walk(directory)
+							.map(Path::toFile)
+							.map(file -> file.getName())
+							.collect(Collectors.joining(", "));
+			logger.error(path, all);
+
+		} catch (Exception e) {
+			logger.error(path, e);
+		}
 	}
 
 	public Process runTestInAProcess() throws Exception {
