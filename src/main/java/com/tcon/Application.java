@@ -20,7 +20,6 @@ public class Application {
 	private static final Logger logger = LogManager.getLogger(Application.class);
 	public static String PULLREQUEST;
 	public static String TOKEN;
-
 	public static void main(String[] args) throws Exception{
 		logger.error("Plugin started with {} on {} at: {}", Arrays.toString(args), operatingSystem(), Instant.now());
 
