@@ -39,7 +39,7 @@ public class Application {
 		PULLREQUEST = args[0];
 		TOKEN = args[1];
 		Application bootApplication = new Application();
-		//Process process = bootApplication.runTestInAProcess();
+		Process process = bootApplication.runTestInAProcess();
 	}
 
 	private static void extracted(String path) {
