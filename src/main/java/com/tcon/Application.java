@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,11 +39,13 @@ public class Application {
 		PULLREQUEST = args[0];
 		TOKEN = args[1];
 		Application bootApplication = new Application();
-		Process process = bootApplication.runTestInAProcess();
+		//Process process = bootApplication.runTestInAProcess();
 	}
 
 	private static void extracted(String path) {
 		Path directory = Paths.get(path);
+		File file1 = directory.toFile();
+		logger.error("Looking at: {}, {}", path, file1.exists());
 
 		try {
 			String all =
@@ -50,7 +53,7 @@ public class Application {
 							.map(Path::toFile)
 							.map(file -> file.getName())
 							.collect(Collectors.joining(", "));
-			logger.error(path, all);
+			logger.error(path + ": " +all);
 
 		} catch (Exception e) {
 			logger.error(path, e);
