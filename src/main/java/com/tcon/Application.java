@@ -29,7 +29,7 @@ public class Application {
 	public static void main(String[] args) throws Exception{
 		logger.error("Plugin started with {} on {} at: {}", Arrays.toString(args), operatingSystem(), Instant.now());
 
-		if(args.length <= 2) {
+		if(args.length < 2) {
 			throw new RuntimeException("Expected argument number is 2 but " + args.length + " supplied!");
 		}
 
