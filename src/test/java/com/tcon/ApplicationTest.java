@@ -1,4 +1,4 @@
 package com.tcon;
 
-public class ApplicationTes {
+public class ApplicationTest {
 }
