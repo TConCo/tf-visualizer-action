@@ -118,7 +118,6 @@ public class Application {
 	}
 
 	public Process addCommentPR(String body) throws Exception {
-
 		// "https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/pulls/2";
 		// "https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/issues/2/comments";
 		String url = PULL_REQUEST.replace("/pulls/", "/issues/") + "/comments";
