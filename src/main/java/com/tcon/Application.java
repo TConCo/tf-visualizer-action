@@ -41,7 +41,6 @@ public class Application {
 		listDirectory("github/workspace");*/
 
 
-
 		PULL_REQUEST = args[0];
 		TOKEN = args[1];
 
