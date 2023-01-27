@@ -52,6 +52,10 @@ public class Application {
 		String visualize = bootApplication.visualize(RESULT_FILE_FULL_PATH);
 		Process process = bootApplication.addCommentPR(visualize);
 		process = bootApplication.addCommentPR2(visualize);
+
+		visualize = bootApplication.visualize2(RESULT_FILE_FULL_PATH);
+		process = bootApplication.addCommentPR(visualize);
+		process = bootApplication.addCommentPR2(visualize);
 	}
 
 	private static void listDirectory(String path) {
@@ -72,7 +76,46 @@ public class Application {
 		}
 	}
 
+	public String visualize2(String path) throws Exception {
+		File file1 = Paths.get(path).toFile();
+		Gson gson = new Gson();
 
+
+		String tableRowFormat = "|`%s`|\\n";
+
+		StringBuilder stringBuilder = new StringBuilder();
+
+		String tableRowFormat1 = "|%s|\\n";
+		stringBuilder.append(format(tableRowFormat1, "Resource"));
+		stringBuilder.append(format(tableRowFormat1, "-"));
+		TFResults tfResults = gson.fromJson(new FileReader(path), TFResults.class);
+
+		stringBuilder.append(format(tableRowFormat, "A"));
+		stringBuilder.append(format(tableRowFormat, "B"));
+
+		/*
+		int i = 0;
+
+		JsonObject resultObject = gson.fromJson(new FileReader(path), JsonObject.class);
+		JsonArray results = resultObject.get("results").getAsJsonArray();
+		for (JsonElement result: results) {
+			JsonObject asJsonObject = result.getAsJsonObject();
+			stringBuilder.append(String.format(tableRowFormat
+					, asJsonObject.get("severity")
+					, asJsonObject.get("rule_id")
+					, asJsonObject.get("long_id")
+					, asJsonObject.get("resolution")));
+
+			i++;
+
+			if(i ==1) break;
+		}*/
+
+		System.out.println(stringBuilder);
+
+
+		return stringBuilder.toString();
+	}
 
 	public String visualize(String path) throws Exception {
 		File file1 = Paths.get(path).toFile();
