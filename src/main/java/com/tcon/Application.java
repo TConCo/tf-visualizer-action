@@ -162,7 +162,6 @@ stringBuilder.append("</table>         ");
 	}
 
 	public String visualize(String path) throws Exception {
-		File file1 = Paths.get(path).toFile();
 		Gson gson = new Gson();
 
 		StringBuilder stringBuilder = new StringBuilder();
