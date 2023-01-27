@@ -79,18 +79,21 @@ public class Application {
 	public String visualize2(String path) throws Exception {
 		File file1 = Paths.get(path).toFile();
 		Gson gson = new Gson();
-
-		String tableRowFormat = "|`%s`|\\n";
-
 		StringBuilder stringBuilder = new StringBuilder();
-
-		String tableRowFormat1 = "|%s|\\n";
-		stringBuilder.append(format(tableRowFormat1, "Resource"));
-		stringBuilder.append(format(tableRowFormat1, "-"));
-		TFResults tfResults = gson.fromJson(new FileReader(path), TFResults.class);
-
-		stringBuilder.append(format(tableRowFormat, "A"));
-		stringBuilder.append(format(tableRowFormat, "B"));
+		stringBuilder.append("<table>");
+stringBuilder.append("<thead>          ");
+stringBuilder.append("<tr>             ");
+stringBuilder.append("<th>foo</th>     ");
+stringBuilder.append("<th>bar</th>     ");
+stringBuilder.append("</tr>            ");
+stringBuilder.append("</thead>         ");
+stringBuilder.append("<tbody>          ");
+stringBuilder.append("<tr>             ");
+stringBuilder.append("<td>baz</td>     ");
+stringBuilder.append("<td>bim</td>     ");
+stringBuilder.append("</tr>            ");
+stringBuilder.append("</tbody>         ");
+stringBuilder.append("</table>         ");
 
 		/*
 		int i = 0;
