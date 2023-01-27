@@ -91,7 +91,6 @@ public class Application {
 		stringBuilder.append(format(tableRowFormat, "A"));
 		stringBuilder.append(format(tableRowFormat, "B"));
 
-
 		/*
 		int i = 0;
 
