@@ -1,6 +1,9 @@
 package com.tcon;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,11 +54,11 @@ public class Application {
 		Application bootApplication = new Application();
 		String visualize = bootApplication.visualize(RESULT_FILE_FULL_PATH);
 		Process process = bootApplication.addCommentPR(visualize);
-		process = bootApplication.addCommentPR2(visualize);
+		/*process = bootApplication.addCommentPR2(visualize);
 
 		visualize = bootApplication.visualize2(RESULT_FILE_FULL_PATH);
 		process = bootApplication.addCommentPR(visualize);
-		process = bootApplication.addCommentPR2(visualize);
+		process = bootApplication.addCommentPR2(visualize);*/
 	}
 
 	private static void listDirectory(String path) {
@@ -117,7 +120,7 @@ stringBuilder.append("</table>         ");
 		return stringBuilder.toString();
 	}
 
-	public String visualize(String path) throws Exception {
+	public String visualize3(String path) throws Exception {
 		File file1 = Paths.get(path).toFile();
 		Gson gson = new Gson();
 
@@ -158,18 +161,25 @@ stringBuilder.append("</table>         ");
 		return stringBuilder.toString();
 	}
 
-	/*public String visualize(String path) throws Exception {
+	public String visualize(String path) throws Exception {
 		File file1 = Paths.get(path).toFile();
 		Gson gson = new Gson();
 
-
-		String tableRowFormat = "^|`%s`^|`%s`^|`%s`^|`%s`^|`%s`^|\\n";
-
 		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("<table>");
+		stringBuilder.append("<thead>          ");
+		stringBuilder.append("<tr>             ");
+		stringBuilder.append("<th>Resource</th>     ");
+		stringBuilder.append("<th>Path</th>     ");
+		stringBuilder.append("<th>Severity</th>     ");
+		stringBuilder.append("<th>RuleId</th>     ");
+		stringBuilder.append("<th>Description</th>     ");
+		stringBuilder.append("</tr>            ");
+		stringBuilder.append("</thead>         ");
+		stringBuilder.append("<tbody>          ");
 
-		String tableRowFormat1 = "^|%s^|%s^|%s^|%s^|%s^|\\n";
-		stringBuilder.append(format(tableRowFormat1, "Resource", "Path", "severity", "rule_id", "Description"));
-		stringBuilder.append(format(tableRowFormat1, "-", "-", "-", "-", "-"));
+		String tableRowFormat = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>";
+
 		TFResults tfResults = gson.fromJson(new FileReader(path), TFResults.class);
 
 		tfResults.results.stream()
@@ -177,29 +187,16 @@ stringBuilder.append("</table>         ");
 				.map(tfResult -> format(tableRowFormat, tfResult.resource, tfResult.location.filename, tfResult.severity, tfResult.rule_id, tfResult.rule_description))
 				.forEach(stringBuilder::append);
 
-		*//*
-		int i = 0;
 
-		JsonObject resultObject = gson.fromJson(new FileReader(path), JsonObject.class);
-		JsonArray results = resultObject.get("results").getAsJsonArray();
-		for (JsonElement result: results) {
-			JsonObject asJsonObject = result.getAsJsonObject();
-			stringBuilder.append(String.format(tableRowFormat
-					, asJsonObject.get("severity")
-					, asJsonObject.get("rule_id")
-					, asJsonObject.get("long_id")
-					, asJsonObject.get("resolution")));
-
-			i++;
-
-			if(i ==1) break;
-		}*//*
+		stringBuilder.append("</tbody>         ");
+		stringBuilder.append("</table>         ");
 
 		System.out.println(stringBuilder);
 
 
 		return stringBuilder.toString();
-	}*/
+	}
+
 
 
 	//curl https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/issues/22/comments  --header "authorization: Bearer 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" -d  ' { \"body\" : \"|Resource|\n|-|\n|A|\" } '
