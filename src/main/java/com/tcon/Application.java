@@ -51,6 +51,7 @@ public class Application {
 		Application bootApplication = new Application();
 		String visualize = bootApplication.visualize(RESULT_FILE_FULL_PATH);
 		Process process = bootApplication.addCommentPR(visualize);
+		process = bootApplication.addCommentPR2(visualize);
 	}
 
 	private static void listDirectory(String path) {
@@ -78,19 +79,18 @@ public class Application {
 		Gson gson = new Gson();
 
 
-		String tableRowFormat = "^|`%s`^|`%s`^|`%s`^|`%s`^|`%s`^|\\n";
+		String tableRowFormat = "^|`%s`^|\\n";
 
 		StringBuilder stringBuilder = new StringBuilder();
 
-		String tableRowFormat1 = "^|%s^|%s^|%s^|%s^|%s^|\\n";
-		stringBuilder.append(format(tableRowFormat1, "Resource", "Path", "severity", "rule_id", "Description"));
-		stringBuilder.append(format(tableRowFormat1, "-", "-", "-", "-", "-"));
+		String tableRowFormat1 = "^|%s^|\\n";
+		stringBuilder.append(format(tableRowFormat1, "Resource"));
+		stringBuilder.append(format(tableRowFormat1, "-"));
 		TFResults tfResults = gson.fromJson(new FileReader(path), TFResults.class);
 
-		tfResults.results.stream()
-				.sorted(reverseOrder())
-				.map(tfResult -> format(tableRowFormat, tfResult.resource, tfResult.location.filename, tfResult.severity, tfResult.rule_id, tfResult.rule_description))
-				.forEach(stringBuilder::append);
+		stringBuilder.append(format(tableRowFormat, "A"));
+		stringBuilder.append(format(tableRowFormat, "B"));
+
 
 		/*
 		int i = 0;
@@ -116,12 +116,78 @@ public class Application {
 		return stringBuilder.toString();
 	}
 
+	/*public String visualize(String path) throws Exception {
+		File file1 = Paths.get(path).toFile();
+		Gson gson = new Gson();
+
+
+		String tableRowFormat = "^|`%s`^|`%s`^|`%s`^|`%s`^|`%s`^|\\n";
+
+		StringBuilder stringBuilder = new StringBuilder();
+
+		String tableRowFormat1 = "^|%s^|%s^|%s^|%s^|%s^|\\n";
+		stringBuilder.append(format(tableRowFormat1, "Resource", "Path", "severity", "rule_id", "Description"));
+		stringBuilder.append(format(tableRowFormat1, "-", "-", "-", "-", "-"));
+		TFResults tfResults = gson.fromJson(new FileReader(path), TFResults.class);
+
+		tfResults.results.stream()
+				.sorted(reverseOrder())
+				.map(tfResult -> format(tableRowFormat, tfResult.resource, tfResult.location.filename, tfResult.severity, tfResult.rule_id, tfResult.rule_description))
+				.forEach(stringBuilder::append);
+
+		*//*
+		int i = 0;
+
+		JsonObject resultObject = gson.fromJson(new FileReader(path), JsonObject.class);
+		JsonArray results = resultObject.get("results").getAsJsonArray();
+		for (JsonElement result: results) {
+			JsonObject asJsonObject = result.getAsJsonObject();
+			stringBuilder.append(String.format(tableRowFormat
+					, asJsonObject.get("severity")
+					, asJsonObject.get("rule_id")
+					, asJsonObject.get("long_id")
+					, asJsonObject.get("resolution")));
+
+			i++;
+
+			if(i ==1) break;
+		}*//*
+
+		System.out.println(stringBuilder);
+
+
+		return stringBuilder.toString();
+	}*/
+
+
+	//curl https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/issues/22/comments  --header "authorization: Bearer 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" -d  ' { \"body\" : \"|Resource|\n|-|\n|A|\" } '
+
 	public Process addCommentPR(String body) throws Exception {
 		// "https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/pulls/2";
 		// "https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/issues/2/comments";
 		String url = PULL_REQUEST.replace("/pulls/", "/issues/") + "/comments";
 		//body = "test";
 		String payload = format(" \" { \\\"body\\\" : \\\" %s \\\" } \" ", body);
+		//String credentials = "-u " + TOKEN;
+		String credentials = format("--header \"authorization: Bearer %s\"", TOKEN);
+		payload = payload.isEmpty() ? "" : "-d " + payload;
+		String curlCommand = format("curl %s %s %s", url, credentials, payload);
+		List<String> shellCommand = isRunningOnWindows() ? asList("cmd", "/C", curlCommand) : asList("bash", "-c", curlCommand);
+		logger.error("Requesting '{}'", shellCommand);
+		ProcessBuilder builder = new ProcessBuilder(shellCommand);
+		Process process = builder.start();
+		String response = new BufferedReader(new InputStreamReader(process.getInputStream())).lines().collect(joining("\n"));
+		logger.error("Requested '{}'", shellCommand);
+		logger.error("Response '{}'", response);
+		return process;
+	}
+
+	public Process addCommentPR2(String body) throws Exception {
+		// "https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/pulls/2";
+		// "https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/issues/2/comments";
+		String url = PULL_REQUEST.replace("/pulls/", "/issues/") + "/comments";
+		//body = "test";
+		String payload = format(" ' { \\\"body\\\" : \\\" %s \\\" } ' ", body);
 		//String credentials = "-u " + TOKEN;
 		String credentials = format("--header \"authorization: Bearer %s\"", TOKEN);
 		payload = payload.isEmpty() ? "" : "-d " + payload;
