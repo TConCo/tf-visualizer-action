@@ -77,8 +77,6 @@ public class Application {
 	}
 
 	public String visualize2(String path) throws Exception {
-		File file1 = Paths.get(path).toFile();
-		Gson gson = new Gson();
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("<table>");
 stringBuilder.append("<thead>          ");
