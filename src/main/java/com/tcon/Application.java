@@ -80,7 +80,6 @@ public class Application {
 		File file1 = Paths.get(path).toFile();
 		Gson gson = new Gson();
 
-
 		String tableRowFormat = "|`%s`|\\n";
 
 		StringBuilder stringBuilder = new StringBuilder();
