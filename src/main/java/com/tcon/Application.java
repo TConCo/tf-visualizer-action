@@ -1,12 +1,9 @@
 package com.tcon;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+ó
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -16,8 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -36,14 +35,6 @@ public class Application {
 			throw new RuntimeException("Expected argument number is 2 but " + args.length + " supplied!");
 		}
 
-/*		listDirectory("/");
-		listDirectory("");
-		listDirectory("/home/runner/work/tf-visualizer-action-test/tf-visualizer-action-test");
-		listDirectory("home/runner/work/tf-visualizer-action-test/tf-visualizer-action-test");
-		listDirectory("/github/workspace");
-		listDirectory("github/workspace");*/
-
-
 		PULL_REQUEST = args[0];
 		TOKEN = args[1];
 
@@ -54,11 +45,6 @@ public class Application {
 		Application bootApplication = new Application();
 		String visualize = bootApplication.visualize(RESULT_FILE_FULL_PATH);
 		Process process = bootApplication.addCommentPR(visualize);
-		/*process = bootApplication.addCommentPR2(visualize);
-
-		visualize = bootApplication.visualize2(RESULT_FILE_FULL_PATH);
-		process = bootApplication.addCommentPR(visualize);
-		process = bootApplication.addCommentPR2(visualize);*/
 	}
 
 	private static void listDirectory(String path) {
@@ -79,88 +65,6 @@ public class Application {
 		}
 	}
 
-	public String visualize2(String path) throws Exception {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("<table>");
-stringBuilder.append("<thead>          ");
-stringBuilder.append("<tr>             ");
-stringBuilder.append("<th>foo</th>     ");
-stringBuilder.append("<th>bar</th>     ");
-stringBuilder.append("</tr>            ");
-stringBuilder.append("</thead>         ");
-stringBuilder.append("<tbody>          ");
-stringBuilder.append("<tr>             ");
-stringBuilder.append("<td>baz</td>     ");
-stringBuilder.append("<td>bim</td>     ");
-stringBuilder.append("</tr>            ");
-stringBuilder.append("</tbody>         ");
-stringBuilder.append("</table>         ");
-
-		/*
-		int i = 0;
-
-		JsonObject resultObject = gson.fromJson(new FileReader(path), JsonObject.class);
-		JsonArray results = resultObject.get("results").getAsJsonArray();
-		for (JsonElement result: results) {
-			JsonObject asJsonObject = result.getAsJsonObject();
-			stringBuilder.append(String.format(tableRowFormat
-					, asJsonObject.get("severity")
-					, asJsonObject.get("rule_id")
-					, asJsonObject.get("long_id")
-					, asJsonObject.get("resolution")));
-
-			i++;
-
-			if(i ==1) break;
-		}*/
-
-		System.out.println(stringBuilder);
-
-
-		return stringBuilder.toString();
-	}
-
-	public String visualize3(String path) throws Exception {
-		File file1 = Paths.get(path).toFile();
-		Gson gson = new Gson();
-
-
-		String tableRowFormat = "^|`%s`^|\\n";
-
-		StringBuilder stringBuilder = new StringBuilder();
-
-		String tableRowFormat1 = "^|%s^|\\n";
-		stringBuilder.append(format(tableRowFormat1, "Resource"));
-		stringBuilder.append(format(tableRowFormat1, "-"));
-		TFResults tfResults = gson.fromJson(new FileReader(path), TFResults.class);
-
-		stringBuilder.append(format(tableRowFormat, "A"));
-		stringBuilder.append(format(tableRowFormat, "B"));
-
-		/*
-		int i = 0;
-
-		JsonObject resultObject = gson.fromJson(new FileReader(path), JsonObject.class);
-		JsonArray results = resultObject.get("results").getAsJsonArray();
-		for (JsonElement result: results) {
-			JsonObject asJsonObject = result.getAsJsonObject();
-			stringBuilder.append(String.format(tableRowFormat
-					, asJsonObject.get("severity")
-					, asJsonObject.get("rule_id")
-					, asJsonObject.get("long_id")
-					, asJsonObject.get("resolution")));
-
-			i++;
-
-			if(i ==1) break;
-		}*/
-
-		System.out.println(stringBuilder);
-
-
-		return stringBuilder.toString();
-	}
-
 	public String visualize(String path) throws Exception {
 		Gson gson = new Gson();
 
@@ -172,41 +76,38 @@ stringBuilder.append("</table>         ");
 		stringBuilder.append("<th>Path</th>     ");
 		stringBuilder.append("<th>Severity</th>     ");
 		stringBuilder.append("<th>RuleId</th>     ");
+		stringBuilder.append("<th>Status</th>     ");
 		stringBuilder.append("<th>Description</th>     ");
 		stringBuilder.append("</tr>            ");
 		stringBuilder.append("</thead>         ");
 		stringBuilder.append("<tbody>          ");
 
-		String tableRowFormat = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>";
+		String tableRowFormat = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>";
 
 		TFResults tfResults = gson.fromJson(new FileReader(path), TFResults.class);
+		Comparator<TFResult> tfResultComparator = Comparator.comparingInt(TFResult::getStatus).thenComparing(TFResult::compareTo);
 
 		tfResults.results.stream()
-				.sorted(reverseOrder())
-				.map(tfResult -> format(tableRowFormat, tfResult.resource, tfResult.location.filename, tfResult.severity, tfResult.rule_id, tfResult.rule_description))
+				.sorted(tfResultComparator)
+				.map(tfResult -> format(tableRowFormat, tfResult.resource, tfResult.location.filename, tfResult.severity, tfResult.rule_id, tfResult.status()	, tfResult.rule_description))
 				.forEach(stringBuilder::append);
 
 
 		stringBuilder.append("</tbody>         ");
 		stringBuilder.append("</table>         ");
 
-		System.out.println(stringBuilder);
+		System.out.println();
+		logger.debug("Visualized table: {}", stringBuilder);
 
 
 		return stringBuilder.toString();
 	}
 
-
-
-	//curl https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/issues/22/comments  --header "authorization: Bearer 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" -d  ' { \"body\" : \"|Resource|\n|-|\n|A|\" } '
-
 	public Process addCommentPR(String body) throws Exception {
 		// "https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/pulls/2";
 		// "https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/issues/2/comments";
 		String url = PULL_REQUEST.replace("/pulls/", "/issues/") + "/comments";
-		//body = "test";
 		String payload = format(" \" { \\\"body\\\" : \\\" %s \\\" } \" ", body);
-		//String credentials = "-u " + TOKEN;
 		String credentials = format("--header \"authorization: Bearer %s\"", TOKEN);
 		payload = payload.isEmpty() ? "" : "-d " + payload;
 		String curlCommand = format("curl %s %s %s", url, credentials, payload);
@@ -214,31 +115,14 @@ stringBuilder.append("</table>         ");
 		logger.error("Requesting '{}'", shellCommand);
 		ProcessBuilder builder = new ProcessBuilder(shellCommand);
 		Process process = builder.start();
-		String response = new BufferedReader(new InputStreamReader(process.getInputStream())).lines().collect(joining("\n"));
+		String response = Stream.concat(new BufferedReader(new InputStreamReader(process.getInputStream())).lines()
+				, new BufferedReader(new InputStreamReader(process.getErrorStream())).lines())
+				.collect(joining("\n"));
 		logger.error("Requested '{}'", shellCommand);
 		logger.error("Response '{}'", response);
 		return process;
 	}
 
-	public Process addCommentPR2(String body) throws Exception {
-		// "https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/pulls/2";
-		// "https://api.github.com/repos/fatihtokus/tf-visualizer-action-test/issues/2/comments";
-		String url = PULL_REQUEST.replace("/pulls/", "/issues/") + "/comments";
-		//body = "test";
-		String payload = format(" ' { \\\"body\\\" : \\\" %s \\\" } ' ", body);
-		//String credentials = "-u " + TOKEN;
-		String credentials = format("--header \"authorization: Bearer %s\"", TOKEN);
-		payload = payload.isEmpty() ? "" : "-d " + payload;
-		String curlCommand = format("curl %s %s %s", url, credentials, payload);
-		List<String> shellCommand = isRunningOnWindows() ? asList("cmd", "/C", curlCommand) : asList("bash", "-c", curlCommand);
-		logger.error("Requesting '{}'", shellCommand);
-		ProcessBuilder builder = new ProcessBuilder(shellCommand);
-		Process process = builder.start();
-		String response = new BufferedReader(new InputStreamReader(process.getInputStream())).lines().collect(joining("\n"));
-		logger.error("Requested '{}'", shellCommand);
-		logger.error("Response '{}'", response);
-		return process;
-	}
 	private static String operatingSystem() {
 		return System.getProperty("os.name");
 	}

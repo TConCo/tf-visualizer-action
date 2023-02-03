@@ -6,8 +6,21 @@ public class TFResult implements Comparable<TFResult> {
     String rule_description;
     String resolution;
     String severity;
+    int status;
     String resource;
     TFFileLocation location;
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public String status() {
+        return status == 1 ? "PASSED" : "FAILED";
+    }
 
     @Override
     public int compareTo(TFResult other) {
