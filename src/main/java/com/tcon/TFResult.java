@@ -17,7 +17,6 @@ public class TFResult implements Comparable<TFResult> {
     public int getStatus() {
         return status;
     }
-
     public String status() {
         return status == 1 ? "PASSED" : "FAILED";
     }
